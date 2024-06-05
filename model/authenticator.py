@@ -2,11 +2,12 @@ import os
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
+from config import SCOPES
 
 
 class Authenticator:
-    def __init__(self, scopes):
-        self.scopes = scopes
+    def __init__(self, scopes=None):
+        self.scopes = scopes if scopes else SCOPES
 
     def authenticate_google_calendar(self):
         creds = None
