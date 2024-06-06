@@ -1,18 +1,40 @@
 from datetime import datetime
 from model.event import Event
 from model.recurring_event import *
+from utility import get_event_list
 
 if __name__ == '__main__':
-    #list_events()
-    title = "Test Event"
-    start_time = datetime(2024, 6, 9)
-    end_time = datetime(2024, 6, 9)
-    description = "This is a sample event description."
-    location = "Sample Location"
-    daylong = True
-    attendees = ["alice@example.com", "bob@example.com"]
-    sample_event = Event(title, start_time, end_time, description, location, daylong, attendees)
-    sample_event.add_event()
+    option = 'm'
+
+    events = get_event_list(option)
+    for event in events:
+        event_id = event.get('id')
+        summary = event.get('summary', 'No summary provided')
+        start = event.get('start', {})
+        end = event.get('end', {})
+        start_time = start.get('dateTime', start.get('date'))
+        end_time = end.get('dateTime', end.get('date'))
+        recurring_event_id = event.get('recurringEventId')
+
+        print(f"ID: {event_id}")
+        print(f"Summary: {summary}")
+        print(f"Start Time: {start_time}")
+        print(f"End Time: {end_time}")
+        if recurring_event_id:
+            print(f"This is a recurring event. Recurring Event ID: {recurring_event_id}")
+        else:
+            print("This is a single event.")
+        print()
+
+    # title = "Test Event"
+    # start_time = datetime(2024, 6, 9)
+    # end_time = datetime(2024, 6, 9)
+    # description = "This is a sample event description."
+    # location = "Sample Location"
+    # daylong = True
+    # attendees = ["alice@example.com", "bob@example.com"]
+    # sample_event = Event(title, start_time, end_time, description, location, daylong, attendees)
+    # sample_event.add_event()
 
     # Create a recurrence rule
     # recurrence_rule = RecurrenceRule(
