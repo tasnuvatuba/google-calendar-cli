@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from model.event import Event
 from typing import List, Optional
 
@@ -58,9 +57,29 @@ class RecurrenceRule:
             rrule += f";BYHOUR={','.join(map(str, self.by_hour))}"
         return rrule
 
+    def __str__(self):
+        string_rrule = ""
+        if self.freq:
+            string_rrule += f", Frequency: {self.freq}\n"
+        if self.interval:
+            string_rrule += f", Interval: {self.interval}"
+        if self.count:
+            string_rrule += f", Count: {self.count}"
+        if self.until:
+            string_rrule += f", Until: {self.until}"
+        if self.by_day:
+            string_rrule += f", By Day: {self.by_day}"
+        if self.by_month:
+            string_rrule += f", By Month: {self.by_month}"
+        if self.by_year_day:
+            string_rrule += f", By Year Day: {self.by_year_day}"
+        if self.by_hour:
+            string_rrule += f", By Hour: {self.by_hour}"
+        return string_rrule
+
 
 class RecurringEvent(Event):
-    def __init__(self, title, start_time, end_time, recurrence: RecurrenceRule, description=None, location=None,
+    def __init__(self, title, start_time, end_time, recurrence=None, description=None, location=None,
                  daylong=False, attendees: Optional[List[str]] = None, event_id=None):
         super().__init__(title, start_time, end_time, description, location, daylong, attendees, event_id)
         self.recurrence = recurrence
@@ -68,7 +87,7 @@ class RecurringEvent(Event):
     @classmethod
     def from_json(cls, json_data):
         recurrence = None
-        event = super().from_json(json_data)
+        event = Event.from_json(json_data)  # Why super.from_json doesn't work?????
         recurrence_data = json_data.get("recurrence", "")
         if recurrence_data:
             recurrence = RecurrenceRule.from_rrule(recurrence_data)
@@ -81,4 +100,8 @@ class RecurringEvent(Event):
 
     def __str__(self):
         base_str = super().__str__()
-        return f"{base_str}\nRecurrence: {self.recurrence}"
+        base_str += f"Recurring Meeting...\n"
+        if self.recurrence:
+            base_str += f"Rrule: {self.recurrence}\n"
+        return base_str
+

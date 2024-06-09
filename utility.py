@@ -1,25 +1,5 @@
 from datetime import datetime, timedelta
-
 import pytz
-from googleapiclient.discovery import build
-from model.authenticator import Authenticator
-
-
-def get_event_list(option):
-    time_min, time_max = get_time_ranges(option)
-    auth = Authenticator()
-    creds = auth.authenticate_google_calendar()
-    service = build('calendar', 'v3', credentials=creds)
-    print('Getting events from time_min to time_max')
-    events_result = service.events().list(
-        calendarId='primary',
-        timeMin=time_min,
-        timeMax=time_max,
-        singleEvents=True,
-        orderBy='startTime'
-    ).execute()
-    events = events_result.get('items', [])
-    return events
 
 
 def get_time_ranges(option):
