@@ -174,3 +174,13 @@ class Calendar:
             logging.info(f"An error occurred: {e}")
         except Exception as e:
             logging.error(f"An unexpected error occurred: {e}")
+
+    def delete_event(self, event_id):
+        creds = self.authenticate_google_calendar()
+        service = build('calendar', 'v3', credentials=creds)
+        try:
+            service.events().delete(calendarId='primary', eventId=event_id).execute()
+        except HttpError as e:
+            logging.info(f"An error occurred: {e}")
+        except Exception as e:
+            logging.error(f"An unexpected error occurred: {e}")
