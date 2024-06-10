@@ -1,4 +1,6 @@
 import os
+
+import typer
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
@@ -68,7 +70,8 @@ class Calendar:
     def update_event(self, event):
         creds = self.authenticate_google_calendar()
         service = build('calendar', 'v3', credentials=creds)
-        json_event = service.events().update(calendarId='primary', eventId=event.event_id, body=event.to_json()).execute()
+        json_event = service.events().update(calendarId='primary', eventId=event.event_id,
+                                             body=event.to_json()).execute()
         return json_event
 
     def add_attendees_to_event(self, event, attendees):
@@ -79,7 +82,47 @@ class Calendar:
             new_attendees.append({'email': attendee})
         for attendee in attendees:
             new_attendees.append({'email': attendee})
+        json_attendees = {
+            "attendees": new_attendees
+        }
         json_event = service.events().patch(calendarId='primary', eventId=event.event_id,
-                                             body=new_attendees).execute()
+                                            body=json_attendees).execute()
         return json_event
+
+    def remove_attendees_from_event(self, event, attendees):
+        creds = self.authenticate_google_calendar()
+        service = build('calendar', 'v3', credentials=creds)
+        new_attendees = []
+        for attendee in event.attendees:
+            if attendee not in attendees:
+                new_attendees.append({'email': attendee})
+        json_attendees = {
+            "attendees": new_attendees
+        }
+        json_event = service.events().patch(calendarId='primary', eventId=event.event_id,
+                                            body=json_attendees).execute()
+        return json_event
+
+    def quick_add(self, text):
+        creds = self.authenticate_google_calendar()
+        service = build('calendar', 'v3', credentials=creds)
+        json_event = service.events().quickAdd(calendarId='primary',
+                                               text='Appointment at Somewhere on June 3rd 10am-10:25am').execute()
+        return json_event
+
+    def get_recurring_instances(self, event_id):
+        creds = self.authenticate_google_calendar()
+        service = build('calendar', 'v3', credentials=creds)
+        page_token = None
+        recurring_instances = []
+        while True:
+            typer.echo("page")
+            events = service.events().instances(calendarId='primary', eventId=event_id,
+                                                pageToken=page_token).execute()
+            for event in events['items']:
+                recurring_instances.append(RecurringEvent.from_json(event))
+            page_token = events.get('nextPageToken')
+            if not page_token:
+                break
+        return recurring_instances
 

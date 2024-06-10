@@ -1,6 +1,5 @@
 from datetime import datetime, date
 from typing import Optional, List
-
 import typer
 import logging
 from config import SCOPES
@@ -73,6 +72,13 @@ def add_event(title: str, start_time: datetime, end_time: datetime, description:
 
 
 @app.command()
+def quick_add_event(text: str):
+    calendar = Calendar(SCOPES)
+    added_event = calendar.quick_add(text)
+    print('Event created: %s' % (added_event.get('htmlLink')))
+
+
+@app.command()
 def update_event(event_id: str, title: Optional[str] = None, start_time: Optional[datetime] = None,
                  end_time: Optional[datetime] = None, description: Optional[str] = None,
                  location: Optional[str] = None, attendees: Optional[List[str]] = None):
@@ -119,6 +125,21 @@ def add_attendees(event_id: str, attendees: List[str]):
     updated_event = calendar.add_attendees_to_event(event, attendees)
     print('Event created: %s' % (updated_event.get('htmlLink')))
 
+
+@app.command()
+def remove_attendees(event_id: str, attendees: List[str]):
+    calendar = Calendar(SCOPES)
+    event = calendar.fetch_event_by_id(event_id)
+    updated_event = calendar.remove_attendees_from_event(event, attendees)
+    print('Event created: %s' % (updated_event.get('htmlLink')))
+
+
+@app.command()
+def get_recurring_instances(event_id: str):
+    calendar = Calendar(SCOPES)
+    recurring_instances = calendar.get_recurring_instances(event_id)
+    for instance in recurring_instances:
+        print(instance.title)
 
 
 @app.command(help="Add a new recurring event.")
