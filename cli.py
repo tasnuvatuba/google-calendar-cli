@@ -357,5 +357,13 @@ def add_recurring_event(
     print('Event created: %s' % (added_event.get('htmlLink')))
 
 
+@app.command()
+def delete_event(event_id: str):
+    """Deletes an event given its ID"""
+    calendar = Calendar(SCOPES)
+    calendar.delete_event(event_id)
+    logging.info(f'Event deleted with id {event_id}')
+
+
 if __name__ == '__main__':
     app()
