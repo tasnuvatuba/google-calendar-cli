@@ -297,39 +297,42 @@ def get_recurring_instances(event_id: str):
         print(instance.title)
 
 
-@app.command(help="Add a new recurring event.")
-def add_recurring_event(
-        title: str = typer.Argument(..., help="Title of the event."),
-        start_time: datetime = typer.Argument(..., help="Start time of the event. (YYYY-MM-DDTHH:MM)"),
-        end_time: datetime = typer.Argument(..., help="End time of the event. (YYYY-MM-DDTHH:MM)"),
-        freq: str = typer.Option(..., "--freq", help="Frequency of the recurrence.", show_choices=True,
-                                 metavar=",".join(FREQUENCIES)),
-        interval: int = typer.Option(1, "--interval", help="Interval of the recurrence."),
-        count: Optional[int] = typer.Option(None, "--count", help="Number of occurrences."),
-        until: Optional[datetime] = typer.Option(None, "--until",
-                                                 help="End date of the recurrence. (YYYY-MM-DDTHH:MM)"),
-        by_day: Optional[List[str]] = typer.Option(None, "--by-day", help="Days of the week to recur (e.g., MO, TU).",
-                                                   show_choices=True, metavar=",".join(DAYS_OF_WEEK)),
-        by_month: Optional[List[int]] = typer.Option(None, "--by-month", help="Months to recur.", show_choices=True,
-                                                     metavar="1-12"),
-        by_year_day: Optional[List[int]] = typer.Option(None, "--by-year-day", help="Days of the year to recur.",
-                                                        show_choices=True, metavar="1-366"),
-        by_hour: Optional[List[int]] = typer.Option(None, "--by-hour", help="Hours of the day to recur.",
-                                                    show_choices=True, metavar="0-23"),
-        description: Optional[str] = typer.Option(None, "--description", "-d", help="Description of the event."),
-        location: Optional[str] = typer.Option(None, "--location", "-l", help="Location of the event."),
-        attendees: Optional[List[str]] = typer.Option(None, "--attendees", "-a", help="List of attendees.")
-):
+@app.command()
+def add_recurring_event(title: str, start_time: datetime, end_time: datetime,
+                        freq: str = typer.Argument(show_choices=True, metavar=",".join(FREQUENCIES)),
+                        interval: Optional[int] = typer.Option(None),
+                        count: Optional[int] = typer.Option(None), until: Optional[datetime] = typer.Option(None),
+                        by_day: Optional[List[str]] = typer.Option(None, show_choices=True, metavar=",".join(DAYS_OF_WEEK)),
+                        by_month: Optional[List[int]] = typer.Option(None, show_choices=True, metavar="MONTHS"),
+                        by_year_day: Optional[List[int]] = typer.Option(None, show_choices=True, metavar="DAYS_OF_YEAR"),
+                        by_hour: Optional[List[int]] = typer.Option(None, show_choices=True, metavar="HOURS"),
+                        description: Optional[str] = None, location: Optional[str] = None,
+                        attendees: Optional[List[str]] = None):
     """
-    Add a new recurring event.
+        Add a recurring event.
 
-    Hints:
-    - To create a daylong event, provide only the date without time.
-    - To create an event with specific time, provide both date and time.
+        Args:
+            title (str): Title of the event.
+            start_time (datetime): Start time of the event.
+            end_time (datetime): End time of the event.
+            freq (str): Frequency of the event (e.g., daily, weekly).
+            interval (Optional[int]): Interval between occurrences.
+            count (Optional[int]): Number of occurrences.
+            until (Optional[datetime]): End date for recurring events.
+            by_day (Optional[List[str]]): Days of the week.
+            by_month (Optional[List[int]]): Months of the year.
+            by_year_day (Optional[List[int]]): Days of the year.
+            by_hour (Optional[List[int]]): Hours of the day.
+            description (Optional[str]): Description of the event.
+            location (Optional[str]): Location of the event.
+            attendees (Optional[List[str]]): List of attendees.
+
+        Example:
+        To add a weekly meeting titled "Team Meeting" every Monday at 9:00 AM, starting from today for 10 occurrences:
+
+                python3 cli.py add-recurring-event "Team Meeting" "2024-06-10T09:00:00" "2024-06-10T10:00:00" weekly
+                --by-day Monday --count 10
     """
-    daylong = False
-    if start_time.time() == datetime.min.time() and end_time.time() == datetime.max.time():
-        daylong = True
 
     recurrence = RecurrenceRule(
         freq=freq,
@@ -348,13 +351,14 @@ def add_recurring_event(
         recurrence=recurrence,
         description=description,
         location=location,
-        daylong=daylong,
         attendees=attendees
     )
+    if not recurring_event.is_valid():
+        logging.error("Start and end times should either both have dates only, or both have dates and times.")
+        return
     calendar = Calendar(SCOPES)
     added_event = calendar.add_event(recurring_event)
-    print(added_event)
-    print('Event created: %s' % (added_event.get('htmlLink')))
+    logging.info('Event created: %s' % (added_event.get('htmlLink')))
 
 
 @app.command()

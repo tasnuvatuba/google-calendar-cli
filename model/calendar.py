@@ -70,6 +70,7 @@ class Calendar:
         service = build('calendar', 'v3', credentials=creds)
         try:
             json_event = service.events().get(calendarId='primary', eventId=event_id).execute()
+            print(json_event)
             if "recurringEventId" in json_event:
                 event = (RecurringEvent.from_json(json_event))
             else:
@@ -81,6 +82,7 @@ class Calendar:
             logging.error(f"An unexpected error occurred: {e}")
 
     def add_event(self, event: Event):
+        print(event.to_json())
         creds = self.authenticate_google_calendar()
         service = build('calendar', 'v3', credentials=creds)
         try:

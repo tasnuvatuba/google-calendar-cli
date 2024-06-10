@@ -96,7 +96,7 @@ class RecurringEvent(Event):
 
     def to_json(self):
         event = super().to_json()
-        event['recurrence'] = self.recurrence.to_rrule()
+        event['recurrence'] = [f"RRULE:{self.recurrence.to_rrule()}"]
         return event
 
     def __str__(self):
