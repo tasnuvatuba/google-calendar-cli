@@ -1,3 +1,5 @@
+from datetime import date, datetime
+
 from dateutil.parser import isoparse
 from typing import List, Optional
 
@@ -72,6 +74,16 @@ class Event:
             del event["end"]["date"]
 
         return event
+
+    def is_valid(self):
+        if isinstance(self.start_time, date) and isinstance(self.end_time, date):
+            self.daylong = True
+            return True
+        elif isinstance(self.start_time, datetime) and isinstance(self.end_time, datetime):
+            self.daylong = False
+            return True
+        else:
+            return False
 
     def __str__(self):
         event_details = (f"Event ID: {self.event_id}\n"

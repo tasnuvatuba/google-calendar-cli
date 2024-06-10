@@ -91,7 +91,8 @@ class RecurringEvent(Event):
         recurrence_data = json_data.get("recurrence", "")
         if recurrence_data:
             recurrence = RecurrenceRule.from_rrule(recurrence_data)
-        return cls(event.title, event.start_time, event.end_time, recurrence, event.description, event.location, event.daylong, event.attendees, event.event_id)
+        return cls(event.title, event.start_time, event.end_time, recurrence, event.description, event.location,
+                   event.daylong, event.attendees, event.event_id)
 
     def to_json(self):
         event = super().to_json()
@@ -104,4 +105,3 @@ class RecurringEvent(Event):
         if self.recurrence:
             base_str += f"Rrule: {self.recurrence}\n"
         return base_str
-
