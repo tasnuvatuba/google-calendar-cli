@@ -1,5 +1,5 @@
-credentials.json
-token.json
+google_calendar_cli/credentials.json
+google_calendar_cli/token.json
 
 # Byte-compiled / optimized / DLL files
 **/__pycache__/
