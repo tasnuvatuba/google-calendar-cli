@@ -8,10 +8,10 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from config import SCOPES
-from model.event import Event
-from model.recurring_event import RecurringEvent
-from utility import get_time_ranges
+from google_calendar_cli.config import SCOPES
+from google_calendar_cli.model.event import Event
+from google_calendar_cli.model.recurring_event import RecurringEvent
+from google_calendar_cli.utility import get_time_ranges
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 

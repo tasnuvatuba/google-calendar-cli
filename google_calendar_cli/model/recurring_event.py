@@ -1,5 +1,5 @@
 from datetime import datetime
-from model.event import Event
+from google_calendar_cli.model.event import Event
 from typing import List, Optional
 
 
