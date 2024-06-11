@@ -35,13 +35,13 @@ def list_events(period: str = typer.Argument(show_choices=True, metavar=",".join
 
     Example:
         To list events for today:
-        $ python cli.py list-events d
+        $ python3 cli.py list-events d
 
         To list events for this week:
-        $ python cli.py list-events w
+        $ python3 cli.py list-events w
 
         To list events for this month:
-        $ python cli.py list-events m
+        $ python3 cli.py list-events m
     """
     logging.info('Getting events within the specified time range...\n')
     calendar = Calendar(SCOPES)
@@ -68,7 +68,7 @@ def view_event(event_id: str):
     Example:
         To view an event with ID '12345', run the following command:
 
-            python cli.py view-event 12345
+            python3 cli.py view-event 12345
 
     Notes:
         - Ensure that you have set up your Google Calendar API credentials
@@ -107,7 +107,7 @@ def add_event(title: str, start_time: datetime, end_time: datetime, description:
             attendees (Optional[List[str]], optional): A list of email addresses of the attendees. Default is None.
 
         Example:
-            python cli.py add-event "Team Meeting" "2024-06-10 10:00" "2024-06-10 11:00" \
+            python3 cli.py add-event "Team Meeting" "2024-06-10 10:00" "2024-06-10 11:00" \
            --description "Weekly team meeting to discuss project updates" \
            --location "Conference Room A" \
            --attendees "john.doe@example.com" "jane.smith@example.com"
@@ -140,7 +140,7 @@ def quick_add_event(text: str):
             text (str): The natural language text describing the event details.
 
         Example:
-            python cli.py quick-add-event("Team meeting at 10am tomorrow")
+            python3 cli.py quick-add-event "Team meeting at 10am tomorrow"
 
         The function initializes the Calendar object with the required scopes,
         then calls the quick_add method to create the event. If the event is created successfully,
@@ -180,11 +180,11 @@ def update_event(event_id: str, title: Optional[str] = None, start_time: Optiona
     Example:
         To update the title of an event with ID '12345' to 'Team Meeting', run the following command:
 
-            python cli.py update-event 12345 --title "Team Meeting"
+            python3 cli.py update-event 12345 --title "Team Meeting"
 
         To update the start time and end time of the same event:
 
-            python cli.py update-event 12345 --start_time "2024-06-10T10:00:00" --end_time "2024-06-10T11:00:00"
+            python3 cli.py update-event 12345 --start_time "2024-06-10T10:00:00" --end_time "2024-06-10T11:00:00"
     """
 
     calendar = Calendar(SCOPES)
